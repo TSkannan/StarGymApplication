@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRoleDataRepository extends JpaRepository<UserRoleData, Long> {
 
-
+    UserRoleData findByUserId(Long id);
 }

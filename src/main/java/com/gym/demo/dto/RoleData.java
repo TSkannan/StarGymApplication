@@ -14,10 +14,5 @@ public class RoleData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String roleName;
-
-    @OneToMany(mappedBy = "roleData", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserRoleData> userRoles = new HashSet<>();
-
 }

@@ -6,8 +6,7 @@ import lombok.Data;
 public class UserDetails {
 
     private Long userId;
-    private String username;
+    private String userName;
     private Long roleId;
     private String roleName;
-
 }

@@ -1,44 +1,57 @@
 package com.gym.demo.service;
 
-import com.gym.demo.dto.RoleData;
-import com.gym.demo.dto.SaveUserDet;
-import com.gym.demo.dto.UserData;
-import com.gym.demo.dto.UserRoleData;
+import com.gym.demo.dto.*;
 import com.gym.demo.repo.RoleRepository;
 import com.gym.demo.repo.UserRepository;
 import com.gym.demo.repo.UserRoleDataRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserLoginService {
 
-    @Autowired
-    private UserRoleDataRepository userRoleDataRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRoleDataRepository userRoleDataRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Transactional
     public void createUserWithRole(SaveUserDet userDet) {
-        if(userDet==null){
+        if (userDet == null) {
             throw new RuntimeException("User details can not be null");
         }
         UserData userData = new UserData();
-        userData.setUsername(userDet.getUserName());
+        userData.setUserName(userDet.getUserName());
         userData.setPassword(userDet.getPassword());
         userData = userRepository.save(userData);
 
         RoleData roleData = roleRepository.findByRoleName(userDet.getRoleName());
-        if (roleData==null){
-            throw new RuntimeException("Role not found: "+ userDet.getRoleName());
+        if (roleData == null) {
+            throw new RuntimeException("Role not found: " + userDet.getRoleName());
         }
 
         UserRoleData userRoleData = new UserRoleData();
-        userRoleData.setUserData(userData);
-        userRoleData.setRoleData(roleData);
+        userRoleData.setUserId(userData.getId());
+        userRoleData.setRoleId(roleData.getId());
+        userRoleData.setRoleName(userDet.getRoleName());
         userRoleDataRepository.save(userRoleData);
+    }
+
+    public UserDetails validateUserLogin(ValidateUser user) {
+        UserData userData = userRepository.findByUserNameAndPassword(user.getUserName(), user.getPassword());
+        if (userData == null) {
+            throw new RuntimeException("Invalid user credentials");
+        }
+        UserRoleData userRoleData = userRoleDataRepository.findByUserId(userData.getId());
+        if (userRoleData == null) {
+            throw new RuntimeException("User role not found for user: " + user.getUserName());
+        }
+        UserDetails userDetails = new UserDetails();
+        userDetails.setUserName(userData.getUserName());
+        userDetails.setRoleName(userRoleData.getRoleName());
+        userDetails.setUserId(userData.getId());
+        userDetails.setRoleId(userRoleData.getRoleId());
+        return userDetails;
     }
 }

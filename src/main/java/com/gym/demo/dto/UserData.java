@@ -11,13 +11,6 @@ public class UserData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "userName", length = 64, nullable = false)
-    private String username;
-
-    @Column(name = "password", length = 64, nullable = false)
+    private String userName;
     private String password;
-
-    @OneToOne(mappedBy = "userData", cascade = CascadeType.ALL, orphanRemoval = true)
-    private UserRoleData userRole;
 }

@@ -7,21 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "UserRoleData", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"userdata_id"})
-})
+@Table(name = "UserRoleData")
+
 public class UserRoleData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "userdata_id", nullable = false, referencedColumnName = "id", unique = true)
-    private UserData userData;
-
-    @ManyToOne
-    @JoinColumn(name = "roledata_id", nullable = false, referencedColumnName = "id", unique = true)
-    private RoleData roleData;
-
+    private Long userId;
+    private Long roleId;
+    private String roleName;
 }
